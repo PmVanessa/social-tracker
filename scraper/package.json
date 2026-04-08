@@ -1,0 +1,15 @@
+{
+  "name": "social-tracker-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "scrape": "node index.js",
+    "scrape:dry": "DRY_RUN=true node index.js",
+    "install-browsers": "npx playwright install chromium --with-deps"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1",
+    "playwright": "^1.41.0"
+  }
+}
