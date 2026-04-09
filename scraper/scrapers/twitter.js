@@ -12,6 +12,7 @@
  */
 
 import { launchBrowser, newPage, dismissCookieBanner } from '../lib/browser.js'
+import { parseCookieEnv } from '../lib/cookies.js'
 
 // Snowflake ID epoch: 2006-03-21T20:50:14.000Z
 const TWITTER_EPOCH = 1288834974657n
@@ -33,12 +34,8 @@ export async function scrapeTwitter(handle) {
     const page = await newPage(browser)
 
     // Inject cookies for authenticated access — required for X since 2023
-    if (process.env.TWITTER_COOKIES) {
-      try {
-        const cookies = JSON.parse(process.env.TWITTER_COOKIES)
-        await page.context().addCookies(cookies)
-      } catch {}
-    }
+    const cookies = parseCookieEnv(process.env.TWITTER_COOKIES)
+    if (cookies) await page.context().addCookies(cookies)
 
     const url = `https://x.com/${handle}`
 

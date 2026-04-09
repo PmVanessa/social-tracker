@@ -7,6 +7,7 @@
  */
 
 import { launchBrowser, newPage, dismissCookieBanner } from '../lib/browser.js'
+import { parseCookieEnv } from '../lib/cookies.js'
 
 const TIKTOK_EPOCH_SHIFT = 32n // TikTok encodes unix timestamp in top 32 bits of 64-bit ID
 
@@ -29,12 +30,8 @@ export async function scrapeTikTok(handle) {
     const page = await newPage(browser)
 
     // Inject cookies if available
-    if (process.env.TIKTOK_COOKIES) {
-      try {
-        const cookies = JSON.parse(process.env.TIKTOK_COOKIES)
-        await page.context().addCookies(cookies)
-      } catch {}
-    }
+    const cookies = parseCookieEnv(process.env.TIKTOK_COOKIES)
+    if (cookies) await page.context().addCookies(cookies)
 
     const url = `https://www.tiktok.com/@${handle}`
 

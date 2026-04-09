@@ -11,6 +11,7 @@
  */
 
 import { launchBrowser, newPage } from '../lib/browser.js'
+import { parseCookieEnv } from '../lib/cookies.js'
 
 export async function scrapeInstagram(handle) {
   const browser = await launchBrowser()
@@ -20,12 +21,8 @@ export async function scrapeInstagram(handle) {
     const page = await newPage(browser)
 
     // Inject cookies for authenticated access
-    if (process.env.INSTAGRAM_COOKIES) {
-      try {
-        const cookies = JSON.parse(process.env.INSTAGRAM_COOKIES)
-        await page.context().addCookies(cookies)
-      } catch {}
-    }
+    const cookies = parseCookieEnv(process.env.INSTAGRAM_COOKIES)
+    if (cookies) await page.context().addCookies(cookies)
 
     const url = `https://www.instagram.com/${handle}/`
 

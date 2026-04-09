@@ -8,6 +8,7 @@
  */
 
 import { launchBrowser, newPage, dismissCookieBanner } from '../lib/browser.js'
+import { parseCookieEnv } from '../lib/cookies.js'
 
 export async function scrapeFacebook(handle) {
   const browser = await launchBrowser()
@@ -17,13 +18,9 @@ export async function scrapeFacebook(handle) {
     const page = await newPage(browser)
     const url = `https://www.facebook.com/${handle}`
 
-    // Inject cookies if provided (for future authenticated scraping)
-    if (process.env.FACEBOOK_COOKIES) {
-      try {
-        const cookies = JSON.parse(process.env.FACEBOOK_COOKIES)
-        await page.context().addCookies(cookies)
-      } catch {}
-    }
+    // Inject cookies for authenticated access
+    const cookies = parseCookieEnv(process.env.FACEBOOK_COOKIES)
+    if (cookies) await page.context().addCookies(cookies)
 
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
     await dismissCookieBanner(page)

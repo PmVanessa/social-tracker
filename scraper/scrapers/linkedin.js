@@ -11,6 +11,7 @@
  */
 
 import { launchBrowser, newPage } from '../lib/browser.js'
+import { parseCookieEnv } from '../lib/cookies.js'
 
 export async function scrapeLinkedIn(handle, isPersonal = false) {
   const browser = await launchBrowser()
@@ -22,13 +23,9 @@ export async function scrapeLinkedIn(handle, isPersonal = false) {
       ? `https://www.linkedin.com/in/${handle}/recent-activity/all/`
       : `https://www.linkedin.com/company/${handle}/posts/`
 
-    // Inject cookies if provided (for future authenticated scraping)
-    if (process.env.LINKEDIN_COOKIES) {
-      try {
-        const cookies = JSON.parse(process.env.LINKEDIN_COOKIES)
-        await page.context().addCookies(cookies)
-      } catch {}
-    }
+    // Inject cookies for authenticated access
+    const cookies = parseCookieEnv(process.env.LINKEDIN_COOKIES)
+    if (cookies) await page.context().addCookies(cookies)
 
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
     await page.waitForTimeout(3000)
