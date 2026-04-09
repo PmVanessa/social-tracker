@@ -18,6 +18,15 @@ export async function scrapeInstagram(handle) {
 
   try {
     const page = await newPage(browser)
+
+    // Inject cookies for authenticated access
+    if (process.env.INSTAGRAM_COOKIES) {
+      try {
+        const cookies = JSON.parse(process.env.INSTAGRAM_COOKIES)
+        await page.context().addCookies(cookies)
+      } catch {}
+    }
+
     const url = `https://www.instagram.com/${handle}/`
 
     // Capture any XHR responses that contain post data

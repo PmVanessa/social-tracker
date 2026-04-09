@@ -31,6 +31,15 @@ export async function scrapeTwitter(handle) {
 
   try {
     const page = await newPage(browser)
+
+    // Inject cookies for authenticated access — required for X since 2023
+    if (process.env.TWITTER_COOKIES) {
+      try {
+        const cookies = JSON.parse(process.env.TWITTER_COOKIES)
+        await page.context().addCookies(cookies)
+      } catch {}
+    }
+
     const url = `https://x.com/${handle}`
 
     // Intercept GraphQL timeline responses

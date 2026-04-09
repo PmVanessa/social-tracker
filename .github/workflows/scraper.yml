@@ -37,6 +37,8 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          # Optional: inject platform cookies for authenticated scraping
-          # LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
-          # FACEBOOK_COOKIES: ${{ secrets.FACEBOOK_COOKIES }}
+          INSTAGRAM_COOKIES: ${{ secrets.INSTAGRAM_COOKIES }}
+          TIKTOK_COOKIES: ${{ secrets.TIKTOK_COOKIES }}
+          TWITTER_COOKIES: ${{ secrets.TWITTER_COOKIES }}
+          LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
+          FACEBOOK_COOKIES: ${{ secrets.FACEBOOK_COOKIES }}

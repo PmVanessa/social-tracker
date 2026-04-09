@@ -27,6 +27,15 @@ export async function scrapeTikTok(handle) {
 
   try {
     const page = await newPage(browser)
+
+    // Inject cookies if available
+    if (process.env.TIKTOK_COOKIES) {
+      try {
+        const cookies = JSON.parse(process.env.TIKTOK_COOKIES)
+        await page.context().addCookies(cookies)
+      } catch {}
+    }
+
     const url = `https://www.tiktok.com/@${handle}`
 
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
