@@ -18,6 +18,10 @@ import { scrapeLinkedIn } from './scrapers/linkedin.js'
 import { scrapeFacebook } from './scrapers/facebook.js'
 
 const DRY_RUN = process.env.DRY_RUN === 'true'
+const LOOKBACK_HOURS = parseInt(process.env.LOOKBACK_HOURS ?? '0', 10)
+const LOOKBACK_CUTOFF = LOOKBACK_HOURS > 0
+  ? new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000)
+  : null
 
 const SCRAPERS = {
   tiktok:   scrapeTikTok,
@@ -69,6 +73,12 @@ async function saveResults(handle, result) {
   if (result.posts.length > 0) {
     const rows = result.posts
       .filter((p) => p.platformPostId) // skip posts without an ID (can't dedupe)
+      .filter((p) => {
+        // If lookback is set, skip posts older than the cutoff
+        if (!LOOKBACK_CUTOFF) return true
+        if (!p.postedAt) return true // keep posts with no timestamp (can't filter)
+        return new Date(p.postedAt) >= LOOKBACK_CUTOFF
+      })
       .map((p) => ({
         platform_handle_id: handle.id,
         platform_post_id:   p.platformPostId,
